@@ -1,13 +1,14 @@
 const usersDao = require("./users-dao");
 const { InvalidArgumentError } = require("../errors");
 const validations = require("../common-validations");
+const bcrypt = require("bcrypt");
 
 class User {
   constructor(user) {
     this.id = user.id;
     this.name = user.name;
     this.email = user.email;
-    this.password = user.password;
+    this.hashPassword = user.hashPassword;
 
     this.validate();
   }
@@ -20,12 +21,16 @@ class User {
     return usersDao.add(this);
   }
 
+  async addPassword(password) {
+    validations.stringFieldNotNull(password, "password");
+    validations.minFieldSize(password, "password", 8);
+    validations.maxFieldSize(password, "password", 64);
+    this.hashPassword = await User.generateHashPassword(password);
+  }
+
   validate() {
     validations.stringFieldNotNull(this.name, "name");
     validations.stringFieldNotNull(this.email, "email");
-    validations.stringFieldNotNull(this.password, "password");
-    validations.minFieldSize(this.password, "password", 8);
-    validations.maxFieldSize(this.password, "password", 64);
   }
 
   async delete() {
@@ -52,6 +57,11 @@ class User {
 
   static list() {
     return usersDao.list();
+  }
+
+  static generateHashPassword(password) {
+    const hashCost = 12;
+    return bcrypt.hash(password, hashCost);
   }
 }
 

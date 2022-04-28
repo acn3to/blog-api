@@ -9,8 +9,9 @@ module.exports = {
       const user = new User({
         name,
         email,
-        password,
       });
+
+      await user.addPassword(password);
 
       await user.add();
 

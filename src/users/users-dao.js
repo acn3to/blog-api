@@ -9,10 +9,10 @@ module.exports = {
           INSERT INTO users (
             name,
             email,
-            password
+            hashPassword
           ) VALUES (?, ?, ?)
         `,
-        [user.name, user.email, user.password],
+        [user.name, user.email, user.hashPassword],
         (err) => {
           if (err) {
             reject(new InternalServerError("Error! Add user failed"));
