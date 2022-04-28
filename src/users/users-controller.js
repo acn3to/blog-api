@@ -7,7 +7,7 @@ function createJWT(user) {
     id: user.id,
   };
 
-  return jwt.sign(payload, "secret-password");
+  return jwt.sign(payload, process.env.JWT_TOKEN);
 }
 
 module.exports = {
