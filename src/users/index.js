@@ -3,4 +3,5 @@ module.exports = {
   controller: require("./users-controller"),
   model: require("./users-model"),
   authStrategies: require("./auth-strategies"),
+  authMiddlewares: require("./auth-middlewares"),
 };
