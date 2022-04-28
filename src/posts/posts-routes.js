@@ -1,8 +1,12 @@
-const postsController = require('./posts-controller');
+const postsController = require("./posts-controller");
+const passport = require("passport");
 
-module.exports = app => {
+module.exports = (app) => {
   app
-    .route('/post')
+    .route("/post")
     .get(postsController.list)
-    .post(postsController.add);
+    .post(
+      passport.authenticate("bearer", { session: false }),
+      postsController.add
+    );
 };

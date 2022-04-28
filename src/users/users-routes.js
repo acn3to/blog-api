@@ -11,5 +11,10 @@ module.exports = (app) => {
 
   app.route("/user").get(usersController.list).post(usersController.add);
 
-  app.route("/user/:id").delete(usersController.delete);
+  app
+    .route("/user/:id")
+    .delete(
+      passport.authenticate("bearer", { session: false }),
+      usersController.delete
+    );
 };
