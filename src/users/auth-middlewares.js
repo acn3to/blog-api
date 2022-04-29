@@ -1,7 +1,7 @@
 const passport = require("passport");
 
 module.exports = {
-  local: (req, res, next) => {
+  local(req, res, next) {
     passport.authenticate("local", { session: false }, (err, user, info) => {
       if (err && err.name === "InvalidArgumentError") {
         return res.status(401).json({ error: err.message });
@@ -17,7 +17,7 @@ module.exports = {
     })(req, res, next);
   },
 
-  bearer: (req, res, next) => {
+  bearer(req, res, next) {
     passport.authenticate("bearer", { session: false }, (err, user, info) => {
       if (err && err.name === "JsonWebTokenError") {
         return res.status(401).json({ error: err.message });

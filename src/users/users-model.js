@@ -9,7 +9,6 @@ class User {
     this.name = user.name;
     this.email = user.email;
     this.hashPassword = user.hashPassword;
-
     this.validate();
   }
 
@@ -18,7 +17,7 @@ class User {
       throw new InvalidArgumentError("The user already exists!");
     }
 
-    return usersDao.add(this);
+    await usersDao.add(this);
   }
 
   async addPassword(password) {

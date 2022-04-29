@@ -10,7 +10,7 @@ const { InvalidArgumentError } = require("../errors");
 
 function verifyUser(user) {
   if (!user) {
-    throw new InvalidArgumentError("No user attached to this email address");
+    throw new InvalidArgumentError("No user attached to this email");
   }
 }
 
@@ -54,7 +54,7 @@ passport.use(
       await verifyTokenInBlacklist(token);
       const payload = jwt.verify(token, process.env.JWT_TOKEN);
       const user = await User.getById(payload.id);
-      done(null, user, { token: token });
+      done(null, user, { token });
     } catch (err) {
       done(err);
     }

@@ -1,5 +1,5 @@
-const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('db.sqlite');
+const sqlite3 = require("sqlite3").verbose();
+const db = new sqlite3.Database("db.sqlite");
 
 const POSTS_SCHEMA = `
   CREATE TABLE IF NOT EXISTS posts (
@@ -19,17 +19,12 @@ const USERS_SCHEMA = `
   `;
 
 db.serialize(() => {
-  db.run('PRAGMA foreign_keys=ON');
+  db.run("PRAGMA foreign_keys=ON");
   db.run(POSTS_SCHEMA);
   db.run(USERS_SCHEMA);
-
-  db.each('SELECT * FROM users', (_err, user) => {
-    console.log('Users: ');
-    console.log(user);
-  });
 });
 
-process.on('SIGINT', () =>
+process.on("SIGINT", () =>
   db.close(() => {
     process.exit(0);
   })

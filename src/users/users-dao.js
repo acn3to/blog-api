@@ -1,100 +1,53 @@
 const db = require("../../database");
 const { InternalServerError } = require("../errors");
 
+const { promisify } = require("util");
+const dbRun = promisify(db.run).bind(db);
+const dbGet = promisify(db.get).bind(db);
+const dbAll = promisify(db.all).bind(db);
+
 module.exports = {
-  add: (user) => {
-    return new Promise((resolve, reject) => {
-      db.run(
-        `
-          INSERT INTO users (
-            name,
-            email,
-            hashPassword
-          ) VALUES (?, ?, ?)
-        `,
-        [user.name, user.email, user.hashPassword],
-        (err) => {
-          if (err) {
-            reject(new InternalServerError("Error! Add user failed"));
-          }
-
-          return resolve();
-        }
+  async add(user) {
+    try {
+      await dbRun(
+        `INSERT INTO users (name, email, hashPassword) 
+        VALUES (?, ?, ?)`,
+        [user.name, user.email, user.hashPassword]
       );
-    });
+    } catch (err) {
+      throw new InternalServerError("Error! Add user failed");
+    }
   },
 
-  getById: (id) => {
-    return new Promise((resolve, reject) => {
-      db.get(
-        `
-          SELECT *
-          FROM users
-          WHERE id = ?
-        `,
-        [id],
-        (err, user) => {
-          if (err) {
-            return reject("User not found!");
-          }
-
-          return resolve(user);
-        }
-      );
-    });
+  async getById(id) {
+    try {
+      return await dbGet(`SELECT * FROM users WHERE id = ?`, [id]);
+    } catch (err) {
+      throw new InternalServerError("User not found!");
+    }
   },
 
-  getByEmail: (email) => {
-    return new Promise((resolve, reject) => {
-      db.get(
-        `
-          SELECT *
-          FROM users
-          WHERE email = ?
-        `,
-        [email],
-        (err, user) => {
-          if (err) {
-            return reject("User not found!");
-          }
-
-          return resolve(user);
-        }
-      );
-    });
+  async getByEmail(email) {
+    try {
+      return await dbGet(`SELECT * FROM users WHERE email = ?`, [email]);
+    } catch (err) {
+      throw new InternalServerError("User not found!");
+    }
   },
 
-  list: () => {
-    return new Promise((resolve, reject) => {
-      db.all(
-        `
-          SELECT * FROM users
-        `,
-        (err, users) => {
-          if (err) {
-            return reject("Error! List users failed");
-          }
-          return resolve(users);
-        }
-      );
-    });
+  async list() {
+    try {
+      return await dbAll(`SELECT * FROM users`);
+    } catch (err) {
+      throw new InternalServerError("Error! List users failed");
+    }
   },
 
-  delete: (user) => {
-    return new Promise((resolve, reject) => {
-      db.run(
-        `
-          DELETE FROM users
-          WHERE id = ?
-        `,
-        [user.id],
-        (err) => {
-          if (err) {
-            return reject("Error! Delete user failed");
-          }
-          return resolve();
-        }
-      );
-    });
+  async delete(user) {
+    try {
+      await dbRun(`DELETE FROM users WHERE id = ?`, [user.id]);
+    } catch (err) {
+      throw new InternalServerError("Error! Delete user failed");
+    }
   },
 };

@@ -12,7 +12,7 @@ function createJWT(user) {
 }
 
 module.exports = {
-  add: async (req, res) => {
+  async add(req, res) {
     const { name, email, password } = req.body;
 
     try {
@@ -20,30 +20,29 @@ module.exports = {
         name,
         email,
       });
-
       await user.addPassword(password);
-
       await user.add();
 
       res.status(201).send(user);
     } catch (err) {
       if (err instanceof InvalidArgumentError) {
-        res.status(422).json({ error: err.message });
-      } else if (err instanceof InternalServerError) {
-        res.status(500).json({ error: err.message });
-      } else {
-        res.status(500).json({ error: err.message });
+        res.status(400).json({ error: err.message });
       }
+      res.status(500).json({ error: err.message });
     }
   },
 
-  login: (req, res) => {
-    const token = createJWT(req.user);
-    res.set("Authorization", token);
-    res.status(204).send();
+  async login(req, res) {
+    try {
+      const token = createJWT(req.user);
+      res.set("Authorization", token);
+      res.status(204).send();
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   },
 
-  logout: async (req, res) => {
+  async logout(req, res) {
     try {
       const token = req.token;
       await blacklist.add(token);
@@ -53,16 +52,20 @@ module.exports = {
     }
   },
 
-  list: async (_req, res) => {
-    const users = await User.list();
-    res.json(users);
+  async list(req, res) {
+    try {
+      const users = await User.list();
+      res.json(users);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
   },
 
-  delete: async (req, res) => {
-    const user = await User.getById(req.params.id);
+  async delete(req, res) {
     try {
+      const user = await User.getById(req.params.id);
       await user.delete();
-      res.status(200).send();
+      res.status(200).json();
     } catch (err) {
       res.status(500).json({ error: err });
     }
