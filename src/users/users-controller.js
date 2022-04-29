@@ -7,7 +7,7 @@ function createJWT(user) {
     id: user.id,
   };
 
-  return jwt.sign(payload, process.env.JWT_TOKEN);
+  return jwt.sign(payload, process.env.JWT_TOKEN, { expiresIn: "15m" });
 }
 
 module.exports = {
