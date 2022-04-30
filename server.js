@@ -4,6 +4,7 @@ const app = require("./app");
 const port = process.env.NODE_PORT || 3000;
 require("./database");
 require("./redis/blocklist");
+require("./redis/allowlist-refresh-token");
 
 const routes = require("./routes");
 routes(app);

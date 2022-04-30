@@ -2,6 +2,7 @@ const User = require("./users-model");
 const { InvalidArgumentError } = require("../errors");
 const jwt = require("jsonwebtoken");
 const blocklist = require("../../redis/manipulate-blocklist");
+const allowListRefreshToken = require("../../redis/allowlist-refresh-token");
 const crypto = require("crypto");
 const moment = require("moment");
 
@@ -14,10 +15,11 @@ function createJWT(user) {
   return token;
 }
 
-function createOpaqueToken(user) {
+async function createOpaqueToken(user) {
   const opaqueToken = crypto.randomBytes(24).toString("hex");
   const expireDate = moment().add(5, "d").unix();
-  
+  await allowListRefreshToken.add(opaqueToken, user.id, expireDate);
+
   return opaqueToken;
 }
 
@@ -45,7 +47,7 @@ module.exports = {
   async login(req, res) {
     try {
       const accessToken = createJWT(req.user);
-      const refreshToken = createOpaqueToken();
+      const refreshToken = await createOpaqueToken(req.user);
       res.set("Authorization", accessToken);
       res.status(200).json({ refreshToken: refreshToken });
     } catch (err) {
