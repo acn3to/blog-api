@@ -3,7 +3,7 @@ require("dotenv").config();
 const app = require("./app");
 const port = process.env.NODE_PORT || 3000;
 require("./database");
-require("./redis/blocklist");
+require("./redis/blocklist-access-token");
 require("./redis/allowlist-refresh-token");
 
 const routes = require("./routes");

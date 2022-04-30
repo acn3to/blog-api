@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = require("./users-model");
 const { InvalidArgumentError } = require("../errors");
-const blocklist = require("../../redis/manipulate-blocklist");
+const blocklist = require("../../redis/blocklist-access-token");
 
 function verifyUser(user) {
   if (!user) {
