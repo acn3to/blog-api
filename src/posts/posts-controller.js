@@ -1,5 +1,5 @@
 const Post = require("./posts-model");
-const { InvalidArgumentError, InternalServerError } = require("../errors");
+const { InvalidArgumentError } = require("../errors");
 
 module.exports = {
   async add(req, res) {
@@ -7,19 +7,19 @@ module.exports = {
       const post = new Post(req.body);
       await post.add();
 
-      res.status(201).send(post);
+      res.status(201).json(post);
     } catch (err) {
       if (err instanceof InvalidArgumentError) {
         return res.status(400).json({ error: err.message });
       }
-      res.status(500).send({ error: err.message });
+      res.status(500).json({ error: err.message });
     }
   },
 
   async list(req, res) {
     try {
       const posts = await Post.list();
-      res.send(posts);
+      res.json(posts);
     } catch (err) {
       return res.status(500).json({ error: err.message });
     }

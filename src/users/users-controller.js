@@ -1,14 +1,15 @@
 const User = require("./users-model");
-const { InvalidArgumentError, InternalServerError } = require("../errors");
+const { InvalidArgumentError } = require("../errors");
 const jwt = require("jsonwebtoken");
-const blacklist = require("../../redis/manipulate-blacklist");
+const blocklist = require("../../redis/manipulate-blocklist");
 
 function createJWT(user) {
   const payload = {
     id: user.id,
   };
 
-  return jwt.sign(payload, process.env.JWT_TOKEN, { expiresIn: "15m" });
+  const token = jwt.sign(payload, process.env.JWT_TOKEN, { expiresIn: "15m" });
+  return token;
 }
 
 module.exports = {
@@ -23,10 +24,10 @@ module.exports = {
       await user.addPassword(password);
       await user.add();
 
-      res.status(201).send(user);
+      res.status(201).json();
     } catch (err) {
       if (err instanceof InvalidArgumentError) {
-        res.status(400).json({ error: err.message });
+        return res.status(400).json({ error: err.message });
       }
       res.status(500).json({ error: err.message });
     }
@@ -36,7 +37,7 @@ module.exports = {
     try {
       const token = createJWT(req.user);
       res.set("Authorization", token);
-      res.status(204).send();
+      res.status(204).json();
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
@@ -45,10 +46,10 @@ module.exports = {
   async logout(req, res) {
     try {
       const token = req.token;
-      await blacklist.add(token);
-      res.status(204).send();
+      await blocklist.add(token);
+      res.status(204).json();
     } catch (err) {
-      res.status(500).json({ err: err.message });
+      res.status(500).json({ error: err.message });
     }
   },
 
@@ -57,7 +58,7 @@ module.exports = {
       const users = await User.list();
       res.json(users);
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      res.status(500).json({ error: err.message });
     }
   },
 

@@ -1,12 +1,11 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const BearerStrategy = require("passport-http-bearer").Strategy;
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const blacklist = require("../../redis/manipulate-blacklist");
-
+const bcrypt = require("bcrypt");
 const User = require("./users-model");
 const { InvalidArgumentError } = require("../errors");
+const blocklist = require("../../redis/manipulate-blocklist");
 
 function verifyUser(user) {
   if (!user) {
@@ -17,13 +16,13 @@ function verifyUser(user) {
 async function verifyPassword(password, hashPassword) {
   const validPassword = await bcrypt.compare(password, hashPassword);
   if (!validPassword) {
-    throw new InvalidArgumentError("Email or password invalid");
+    throw new InvalidArgumentError("Invalid password or email!");
   }
 }
 
-async function verifyTokenInBlacklist(token) {
-  const tokenInBlacklist = await blacklist.hasToken(token);
-  if (tokenInBlacklist) {
+async function verifyTokenInBlocklist(token) {
+  const tokenInBlocklist = await blocklist.hasToken(token);
+  if (tokenInBlocklist) {
     throw new jwt.JsonWebTokenError("Invalid token by logout!");
   }
 }
@@ -40,6 +39,7 @@ passport.use(
         const user = await User.getByEmail(email);
         verifyUser(user);
         await verifyPassword(password, user.hashPassword);
+
         done(null, user);
       } catch (err) {
         done(err);
@@ -51,7 +51,7 @@ passport.use(
 passport.use(
   new BearerStrategy(async (token, done) => {
     try {
-      await verifyTokenInBlacklist(token);
+      await verifyTokenInBlocklist(token);
       const payload = jwt.verify(token, process.env.JWT_TOKEN);
       const user = await User.getById(payload.id);
       done(null, user, { token });

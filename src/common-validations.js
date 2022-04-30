@@ -1,22 +1,22 @@
 const { InvalidArgumentError } = require("./errors");
 
 module.exports = {
-  stringFieldNotNull: (value, name) => {
+  stringFieldNotNull(value, name) {
     if (typeof value !== "string" || value === 0)
       throw new InvalidArgumentError(`Field ${name} should be filled!`);
   },
 
-  minFieldSize: (value, name, minimun) => {
-    if (value.length < minimun)
+  minFieldSize(value, name, minimum) {
+    if (value.length < minimum)
       throw new InvalidArgumentError(
-        `The field ${name} should have more than ${minimun} characters!`
+        `The ${name} field should have more than ${minimum} characters!`
       );
   },
 
-  maxFieldSize: (value, name, maximun) => {
-    if (value.length > maximun)
+  maxFieldSize(value, name, maximum) {
+    if (value.length > maximum)
       throw new InvalidArgumentError(
-        `The field ${name} should have less than ${maximun} characters!`
+        `The ${name} field should have less than ${maximum} characters!`
       );
   },
 };

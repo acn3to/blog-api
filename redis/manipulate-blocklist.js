@@ -1,8 +1,8 @@
-const blacklist = require("./blacklist");
+const blocklist = require("./blocklist");
 
 const { promisify } = require("util");
-const existsAsync = promisify(blacklist.exists).bind(blacklist);
-const setAsync = promisify(blacklist.set).bind(blacklist);
+const existsAsync = promisify(blocklist.exists).bind(blocklist);
+const setAsync = promisify(blocklist.set).bind(blocklist);
 
 const jwt = require("jsonwebtoken");
 const { createHash } = require("crypto");
@@ -15,8 +15,8 @@ module.exports = {
   async add(token) {
     const expireDate = jwt.decode(token).exp;
     const hashToken = generateHashToken(token);
-    await setAsync(token, "");
-    blacklist.expireat(hashToken, expireDate);
+    await setAsync(hashToken, "");
+    await blocklist.expireat(hashToken, expireDate);
   },
   async hasToken(token) {
     const hashToken = generateHashToken(token);

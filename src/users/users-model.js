@@ -14,7 +14,7 @@ class User {
 
   async add() {
     if (await User.getByEmail(this.email)) {
-      throw new InvalidArgumentError("The user already exists!");
+      throw new InvalidArgumentError("User already exists!");
     }
 
     await usersDao.add(this);

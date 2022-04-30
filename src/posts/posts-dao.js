@@ -12,7 +12,7 @@ module.exports = {
         post.tittle,
         post.content,
       ]);
-    } catch (erro) {
+    } catch (err) {
       throw new InternalServerError("Error! Add post failed");
     }
   },
