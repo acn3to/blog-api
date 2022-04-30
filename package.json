@@ -13,6 +13,7 @@
     "dotenv": "^16.0.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.3",
     "nodemon": "^2.0.2",
     "passport": "^0.5.2",
     "passport-http-bearer": "^1.0.1",
