@@ -1,6 +1,7 @@
 const User = require("./users-model");
 const { InvalidArgumentError } = require("../errors");
 const tokens = require("./tokens");
+const emails = require("./emails");
 
 module.exports = {
   async add(req, res) {
@@ -14,6 +15,7 @@ module.exports = {
       await user.addPassword(password);
       await user.add();
 
+      emails.sendEmail(user).catch(console.log);
       res.status(201).json();
     } catch (err) {
       if (err instanceof InvalidArgumentError) {
