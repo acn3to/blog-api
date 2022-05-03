@@ -1,27 +1,6 @@
 const User = require("./users-model");
 const { InvalidArgumentError } = require("../errors");
-const jwt = require("jsonwebtoken");
-const blocklist = require("../../redis/blocklist-access-token");
-const allowListRefreshToken = require("../../redis/allowlist-refresh-token");
-const crypto = require("crypto");
-const moment = require("moment");
-
-function createJWT(user) {
-  const payload = {
-    id: user.id,
-  };
-
-  const token = jwt.sign(payload, process.env.JWT_TOKEN, { expiresIn: "15m" });
-  return token;
-}
-
-async function createOpaqueToken(user) {
-  const opaqueToken = crypto.randomBytes(24).toString("hex");
-  const expireDate = moment().add(5, "d").unix();
-  await allowListRefreshToken.add(opaqueToken, user.id, expireDate);
-
-  return opaqueToken;
-}
+const tokens = require("./tokens");
 
 module.exports = {
   async add(req, res) {
@@ -46,8 +25,8 @@ module.exports = {
 
   async login(req, res) {
     try {
-      const accessToken = createJWT(req.user);
-      const refreshToken = await createOpaqueToken(req.user);
+      const accessToken = tokens.access.create(req.user.id);
+      const refreshToken = await tokens.refresh.create(req.user.id);
       res.set("Authorization", accessToken);
       res.status(200).json({ refreshToken: refreshToken });
     } catch (err) {
@@ -58,7 +37,7 @@ module.exports = {
   async logout(req, res) {
     try {
       const token = req.token;
-      await blocklist.add(token);
+      await tokens.access.invalidate(token);
       res.status(204).json();
     } catch (err) {
       res.status(500).json({ error: err.message });
