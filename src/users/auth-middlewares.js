@@ -5,7 +5,7 @@ const allowListRefreshToken = require("../../redis/allowlist-refresh-token");
 
 async function verifyRefreshToken(refreshToken) {
   if (!refreshToken) {
-    throw new InvalidArgumentError("Refresh token not sent");
+    throw new InvalidArgumentError("Refresh token not sent!");
   }
   const id = await allowListRefreshToken.getValue(refreshToken);
   if (!id) {
