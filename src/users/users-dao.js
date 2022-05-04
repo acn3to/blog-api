@@ -10,9 +10,9 @@ module.exports = {
   async add(user) {
     try {
       await dbRun(
-        `INSERT INTO users (name, email, hashPassword) 
-        VALUES (?, ?, ?)`,
-        [user.name, user.email, user.hashPassword]
+        `INSERT INTO users (name, email, hashPassword, verifiedEmail) 
+        VALUES (?, ?, ?, ?)`,
+        [user.name, user.email, user.hashPassword, user.verifiedEmail]
       );
     } catch (err) {
       throw new InternalServerError("Error! Add user failed");
@@ -40,6 +40,17 @@ module.exports = {
       return await dbAll(`SELECT * FROM users`);
     } catch (err) {
       throw new InternalServerError("Error! List users failed");
+    }
+  },
+
+  async modifyVerifiedEmail(user, verifiedEmail) {
+    try {
+      await dbRun(`UPDATE users SET verifiedEmail = ? WHERE ID = ?`, [
+        verifiedEmail,
+        user.id,
+      ]);
+    } catch (err) {
+      throw new InternalServerError("Error! Modify verified email failed")
     }
   },
 

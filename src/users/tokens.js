@@ -21,6 +21,10 @@ async function verifyJwtToken(token, name, blocklist) {
 }
 
 async function verifyTokenInBlocklist(token, name, blocklist) {
+  if (!blocklist) {
+    return;
+  }
+
   const tokenInBlocklist = await blocklist.hasToken(token);
   if (tokenInBlocklist) {
     throw new jwt.JsonWebTokenError(`${name} invalid by logout!`);
@@ -89,6 +93,17 @@ module.exports = {
     },
     invalidate(token) {
       return invalidateOpaqueToken(token, this.list);
+    },
+  },
+
+  emailVerification: {
+    name: "Email verification token",
+    expiration: [1, "h"],
+    create(id) {
+      return createJwtToken(id, this.expiration);
+    },
+    verify(token) {
+      return verifyJwtToken(token, this.name);
     },
   },
 };

@@ -17,5 +17,9 @@ module.exports = (app) => {
 
   app.route("/user").get(usersController.list).post(usersController.add);
 
+  app
+    .route("/user/verify_email/:token")
+    .get(authMiddlewares.emailVerification, usersController.verifyEmail);
+
   app.route("/user/:id").delete(authMiddlewares.bearer, usersController.delete);
 };

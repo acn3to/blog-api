@@ -14,7 +14,8 @@ const USERS_SCHEMA = `
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(40) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
-    hashPassword VARCHAR(255) NOT NULL
+    hashPassword VARCHAR(255) NOT NULL,
+    verifiedEmail INTEGER
   )
   `;
 

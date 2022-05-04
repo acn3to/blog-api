@@ -9,6 +9,7 @@ class User {
     this.name = user.name;
     this.email = user.email;
     this.hashPassword = user.hashPassword;
+    this.verifiedEmail = user.verifiedEmail;
     this.validate();
   }
 
@@ -18,6 +19,8 @@ class User {
     }
 
     await usersDao.add(this);
+    const { id } = await usersDao.getByEmail(this.email);
+    this.id = id;
   }
 
   async addPassword(password) {
@@ -30,6 +33,11 @@ class User {
   validate() {
     validations.stringFieldNotNull(this.name, "name");
     validations.stringFieldNotNull(this.email, "email");
+  }
+
+  async verifyEmail() {
+    this.verifiedEmail = true;
+    await usersDao.modifyVerifiedEmail(this, this.verifiedEmail);
   }
 
   async delete() {

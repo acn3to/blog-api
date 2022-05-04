@@ -1,7 +1,12 @@
 const User = require("./users-model");
 const { InvalidArgumentError } = require("../errors");
 const tokens = require("./tokens");
-const emails = require("./emails");
+const { VerificationEmail } = require("./emails");
+
+function createAddress(route, token) {
+  const urlBase = process.env.BASE_URL;
+  return `${urlBase}${route}${token}`;
+}
 
 module.exports = {
   async add(req, res) {
@@ -11,11 +16,16 @@ module.exports = {
       const user = new User({
         name,
         email,
+        verifiedEmail: false,
       });
       await user.addPassword(password);
       await user.add();
 
-      emails.sendEmail(user).catch(console.log);
+      const token = tokens.emailVerification.create(user.id);
+      const address = createAddress("/user/verify_email/", token);
+      const verificationEmail = new VerificationEmail(user, address);
+      verificationEmail.sendEmail().catch(console.log);
+
       res.status(201).json();
     } catch (err) {
       if (err instanceof InvalidArgumentError) {
@@ -50,6 +60,16 @@ module.exports = {
     try {
       const users = await User.list();
       res.json(users);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  },
+
+  async verifyEmail(req, res) {
+    try {
+      const user = req.user;
+      await user.verifyEmail();
+      res.status(200).json();
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
