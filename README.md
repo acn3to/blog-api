@@ -8,7 +8,7 @@
   </a>
 </p>
 
-> A code stuff blog, built in Node.js
+>The server side (backend) of a code stuff blog, built in Node.js
 
 ## Install
 
@@ -24,9 +24,6 @@ npm run start
 
 ## Run tests
 
-```sh
-npm run test
-```
 
 ## Author
 
