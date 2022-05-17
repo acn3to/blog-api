@@ -8,7 +8,18 @@
   </a>
 </p>
 
->The server side (backend) of a code stuff blog, built in Node.js
+>The server side (backend) of a code stuff blog.
+
+## Built with
+
+* [Node.js](https://nodejs.org/en/)
+* [Express.js](https://expressjs.com/)
+* [Jason Web Token](https://jwt.io/)
+* [Bcrypt](https://www.npmjs.com/package/bcrypt)
+* [Moment.js](https://momentjs.com/)
+* [Nodemailer](https://nodemailer.com/)
+* [Redis](https://redis.io/)
+* [SQLite](https://www.sqlite.org/)
 
 ## Install
 
