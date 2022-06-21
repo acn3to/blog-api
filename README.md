@@ -33,9 +33,6 @@ npm install
 npm run start
 ```
 
-## Run tests
-
-
 ## Author
 
 👤 **Arnaldo Neto**
